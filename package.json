@@ -1,0 +1,15 @@
+{
+  "name": "webmidi-mapper",
+  "version": "0.0.0",
+  "description": "Change this!!!!!",
+  "main": "dist/webmidi-mapper.js",
+  "author": {
+    "name": "Glenn de Haan",
+    "email": "glenn@dehaan.cloud",
+    "url": "https://glenndehaan.com/"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "webmidi": "^2.0.0-rc.10"
+  }
+}

@@ -1,0 +1,13 @@
+# Dependency managers
+node_modules/
+npm-debug.log
+
+# PhpStorm specific
+.idea
+
+# General files
+*~
+*.DS_STORE
+
+# Build files
+demo/js/build
