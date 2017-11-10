@@ -1,9 +1,12 @@
-import {init as initWebmidi, onFaderChange, onButtonPress, onRotaryEncoderChange, debugMidi} from '../../../src/webmidi-mapper';
+import {init as initWebmidi, onFaderChange, onButtonPress, onRotaryEncoderChange, debugMidi, midiMaps} from '../../../src/webmidi-mapper';
 
 /**
  * Init app
  */
 function init() {
+    // const midiMap = "korg-nanokontrol2";
+    const midiMap = "maschine-mk2";
+
     const audio1 = document.querySelector("#audio1");
     const audio2 = document.querySelector("#audio2");
     const audio3 = document.querySelector("#audio3");
@@ -19,7 +22,7 @@ function init() {
     let muted3 = false;
     let muted4 = false;
 
-    initWebmidi("korg-nanokontrol2", () => {
+    initWebmidi(midiMap, () => {
         // debugMidi((note, value, mapKey) => {
         //     console.log('note', note);
         //     console.log('value', value);
@@ -133,7 +136,9 @@ function init() {
                 audio4.muted = true;
             }
         });
-    });
+
+        console.log("Maps: ", midiMaps());
+    }, midiMap === "maschine-mk2" ? 1 : 0);
 }
 
 window.addEventListener('load', init);
