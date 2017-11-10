@@ -25,8 +25,11 @@ var midiMap = false;
  *
  * @param mapName
  * @param callback
+ * @param inputDevice
  */
 function init(mapName, callback) {
+    var inputDevice = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
     _webmidi2.default.enable(function (err) {
         if (err) {
             console.warn("[WebMidi] Could not be enabled: ", err);
@@ -36,7 +39,8 @@ function init(mapName, callback) {
             console.log("[WebMidi] Enabled!");
 
             if (_webmidi2.default.inputs.length > 0) {
-                midiInputDevice = _webmidi2.default.inputs[0];
+                console.log("[WebMidi] Available inputs: ", _webmidi2.default.inputs);
+                midiInputDevice = _webmidi2.default.inputs[inputDevice];
                 midiDeviceReady = true;
 
                 console.log('[WebMidi] Connected: ' + midiInputDevice.manufacturer + ' ' + midiInputDevice.name);

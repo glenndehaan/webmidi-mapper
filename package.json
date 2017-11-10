@@ -1,12 +1,16 @@
 {
   "name": "webmidi-mapper",
-  "version": "0.0.0",
-  "description": "Change this!!!!!",
+  "version": "0.0.1",
+  "description": "An expansion to the original webmidi package to map devices in a simple way",
   "main": "dist/webmidi-mapper.js",
   "author": {
     "name": "Glenn de Haan",
     "email": "glenn@dehaan.cloud",
     "url": "https://glenndehaan.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/glenndehaan/webmidi-mapper.git"
   },
   "license": "MIT",
   "dependencies": {
