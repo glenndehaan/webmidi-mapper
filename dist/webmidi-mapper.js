@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.midiMaps = exports.debugMidi = exports.onButtonPress = exports.onRotaryEncoderChange = exports.onFaderChange = exports.init = exports.WebMidi = undefined;
+exports.midiMaps = exports.debugMidi = exports.onDrumPad = exports.onButtonPress = exports.onRotaryEncoderChange = exports.onFaderChange = exports.init = exports.WebMidi = undefined;
 
 var _webmidi = require('webmidi');
 
@@ -114,14 +114,43 @@ function onRotaryEncoderChange(rotaryEncoderNumber, callback) {
  *
  * @param buttonName
  * @param callback
+ * @param listenForOnAndOff
  */
 function onButtonPress(buttonName, callback) {
+    var listenForOnAndOff = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
     if (midiDeviceReady) {
         if (midiMap) {
             if (typeof _maps2.default[midiMap].buttons[buttonName] !== "undefined") {
                 midiInputDevice.addListener("controlchange", "all", function (e) {
                     if (_maps2.default[midiMap].buttons[buttonName] === e.controller.number) {
-                        if (e.value === maxMidiValue) {
+                        if (!listenForOnAndOff) {
+                            if (e.value === maxMidiValue) {
+                                callback();
+                            }
+                        } else {
+                            callback(e.value);
+                        }
+                    }
+                });
+            }
+        }
+    }
+}
+
+/**
+ * Bind event to a drumpad of the MIDI device
+ *
+ * @param padNumber
+ * @param callback
+ */
+function onDrumPad(padNumber, callback) {
+    if (midiDeviceReady) {
+        if (midiMap) {
+            if (typeof _maps2.default[midiMap].drum_pads[padNumber] !== "undefined") {
+                midiInputDevice.addListener("noteon", "all", function (e) {
+                    if (_maps2.default[midiMap].drum_pads[padNumber] === e.note.number) {
+                        if (e.type === "noteon") {
                             callback();
                         }
                     }
@@ -139,21 +168,55 @@ function onButtonPress(buttonName, callback) {
 function debugMidi(callback) {
     if (midiDeviceReady) {
         midiInputDevice.addListener("controlchange", "all", function (e) {
-            var mapValue = false;
+            callback(e.controller.number, e.value, getKeyFromValue(_maps2.default[midiMap], e.controller.number, false));
+        });
 
-            console.log("MIDI Value: ", e.value);
-            console.log("MIDI Note: ", e.controller.number);
-
-            if (midiMap) {
-                mapValue = _maps2.default[midiMap].getKey(e.controller.number);
-                console.log('MIDI Map value: ', mapValue);
-            }
-
-            if (e.value === maxMidiValue) {
-                callback(e.controller.number, e.value, mapValue);
-            }
+        midiInputDevice.addListener("noteon", "all", function (e) {
+            callback(e.note.number, maxMidiValue, getKeyFromValue(_maps2.default[midiMap], e.note.number, true));
         });
     }
+}
+
+/**
+ * Function to get the original key if it is mapped
+ *
+ * @param object
+ * @param value
+ * @param isDrumPad
+ * @return {*}
+ */
+function getKeyFromValue(object, value) {
+    var isDrumPad = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    var categoryKeys = Object.keys(object);
+
+    if (!isDrumPad) {
+        var drumIndex = categoryKeys.indexOf("drum_pads");
+        if (drumIndex > -1) {
+            categoryKeys.splice(drumIndex, 1);
+        }
+
+        for (var category = 0; category < categoryKeys.length; category++) {
+            var buttonKey = Object.keys(object[categoryKeys[category]]);
+
+            for (var button = 0; button < buttonKey.length; button++) {
+                if (object[categoryKeys[category]][buttonKey[button]] === value) {
+                    return { category: categoryKeys[category], key: buttonKey[button] };
+                }
+            }
+        }
+    } else {
+        var _category = "drum_pads";
+        var _buttonKey = Object.keys(object[_category]);
+
+        for (var _button = 0; _button < _buttonKey.length; _button++) {
+            if (object[_category][_buttonKey[_button]] === value) {
+                return { category: _category, key: _buttonKey[_button] };
+            }
+        }
+    }
+
+    return { category: false, key: false };
 }
 
 /**
@@ -183,5 +246,6 @@ exports.init = init;
 exports.onFaderChange = onFaderChange;
 exports.onRotaryEncoderChange = onRotaryEncoderChange;
 exports.onButtonPress = onButtonPress;
+exports.onDrumPad = onDrumPad;
 exports.debugMidi = debugMidi;
 exports.midiMaps = midiMaps;
