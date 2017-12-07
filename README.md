@@ -11,7 +11,7 @@ npm install webmidi-mapper
 ```
 Import the Midi Mapper package somewhere in your code:
 ```
-import {init as initWebmidi, onFaderChange, onButtonPress, onRotaryEncoderChange, debugMidi} from 'webmidi-mapper';
+import {init as initWebmidi, onFaderChange, onButtonPress, onRotaryEncoderChange, onDrumPad, debugMidi, midiMaps} from 'webmidi-mapper';
 ```
 
 ## Usage
@@ -52,6 +52,13 @@ onButtonPress("play", () => {
 });
 ```
 
+To assign a drumpad:
+```
+onDrumPad("1", () => {
+    console.log("Midi drumpad pressed!");
+});
+```
+
 If you want the RAW midi value instead of the 0 to 1 value:
 ```
 onFaderChange("1", (value) => {
@@ -60,6 +67,13 @@ onFaderChange("1", (value) => {
 
 onRotaryEncoderChange("1", (value) => {
     console.log(value);
+}, true);
+```
+
+If you want the button function to respond on both on and off value's:
+```
+onButtonPress("play", () => {
+    console.log("Midi play button pressed!");
 }, true);
 ```
 

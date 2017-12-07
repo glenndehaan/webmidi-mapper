@@ -1,4 +1,5 @@
-import {init as initWebmidi, onFaderChange, onButtonPress, onRotaryEncoderChange, debugMidi, midiMaps} from '../../../src/webmidi-mapper';
+import pizzicato from 'Pizzicato';
+import {init as initWebmidi, onFaderChange, onButtonPress, onRotaryEncoderChange, onDrumPad, debugMidi, midiMaps} from '../../../src/webmidi-mapper';
 
 /**
  * Init app
@@ -22,12 +23,37 @@ function init() {
     let muted3 = false;
     let muted4 = false;
 
+    const activeButtons = {
+        swing: false,
+        volume: false,
+        tempo: false
+    };
+
+    const preloadAudioFiles = [
+        "https://prototype.devone.nl/test/webmidi-mapper/audio/samples/snare-vinyl01.wav",
+        "https://prototype.devone.nl/test/webmidi-mapper/audio/samples/snare-vinyl02.wav",
+        "https://prototype.devone.nl/test/webmidi-mapper/audio/samples/kick-tron.wav",
+        "https://prototype.devone.nl/test/webmidi-mapper/audio/samples/kick-tight.wav",
+        "https://prototype.devone.nl/test/webmidi-mapper/audio/samples/perc-tribal.wav",
+        "https://prototype.devone.nl/test/webmidi-mapper/audio/samples/perc-tambo.wav",
+        "https://prototype.devone.nl/test/webmidi-mapper/audio/samples/cowbell-808.wav",
+        "https://prototype.devone.nl/test/webmidi-mapper/audio/samples/clap-tape.wav"
+    ];
+
+    for(let item = 0; item < preloadAudioFiles.length; item++) {
+        const oReq = new XMLHttpRequest();
+
+        oReq.open("GET", preloadAudioFiles[item], true);
+        oReq.responseType = "arraybuffer";
+        oReq.send();
+    }
+
     initWebmidi(midiMap, () => {
-        // debugMidi((note, value, mapKey) => {
-        //     console.log('note', note);
-        //     console.log('value', value);
-        //     console.log('mapKey', mapKey);
-        // });
+        debugMidi((note, value, mapKey) => {
+            console.log('note', note);
+            console.log('value', value);
+            console.log('mapKey', mapKey);
+        });
 
         /**
          * Audio 1
@@ -55,6 +81,11 @@ function init() {
                 audio1.muted = true;
             }
         });
+        if(midiMap === "maschine-mk2"){
+            onRotaryEncoderChange("5", (value) => {
+                audio1.volume = value;
+            });
+        }
 
         /**
          * Audio 2
@@ -82,6 +113,11 @@ function init() {
                 audio2.muted = true;
             }
         });
+        if(midiMap === "maschine-mk2"){
+            onRotaryEncoderChange("6", (value) => {
+                audio2.volume = value;
+            });
+        }
 
         /**
          * Audio 3
@@ -109,6 +145,11 @@ function init() {
                 audio3.muted = true;
             }
         });
+        if(midiMap === "maschine-mk2"){
+            onRotaryEncoderChange("7", (value) => {
+                audio3.volume = value;
+            });
+        }
 
         /**
          * Audio 4
@@ -135,6 +176,117 @@ function init() {
                 muted4 = true;
                 audio4.muted = true;
             }
+        });
+        if(midiMap === "maschine-mk2"){
+            onRotaryEncoderChange("8", (value) => {
+                audio4.volume = value;
+            });
+        }
+
+        /**
+         * Drumpads
+         */
+        onDrumPad("1", () => {
+            const drumSound = document.createElement('audio');
+            drumSound.src = 'https://prototype.devone.nl/test/webmidi-mapper/audio/samples/snare-vinyl01.wav';
+            drumSound.type = 'audio/wav';
+            drumSound.play();
+        });
+        onDrumPad("2", () => {
+            const drumSound = document.createElement('audio');
+            drumSound.src = 'https://prototype.devone.nl/test/webmidi-mapper/audio/samples/snare-vinyl02.wav';
+            drumSound.type = 'audio/wav';
+            drumSound.play();
+        });
+
+        onDrumPad("5", () => {
+            const drumSound = document.createElement('audio');
+            drumSound.src = 'https://prototype.devone.nl/test/webmidi-mapper/audio/samples/kick-tron.wav';
+            drumSound.type = 'audio/wav';
+            drumSound.play();
+        });
+        onDrumPad("6", () => {
+            const drumSound = document.createElement('audio');
+            drumSound.src = 'https://prototype.devone.nl/test/webmidi-mapper/audio/samples/kick-tight.wav';
+            drumSound.type = 'audio/wav';
+            drumSound.play();
+        });
+
+        onDrumPad("9", () => {
+            const drumSound = document.createElement('audio');
+            drumSound.src = 'https://prototype.devone.nl/test/webmidi-mapper/audio/samples/perc-tribal.wav';
+            drumSound.type = 'audio/wav';
+            drumSound.play();
+        });
+        onDrumPad("10", () => {
+            const drumSound = document.createElement('audio');
+            drumSound.src = 'https://prototype.devone.nl/test/webmidi-mapper/audio/samples/perc-tambo.wav';
+            drumSound.type = 'audio/wav';
+            drumSound.play();
+        });
+
+        onDrumPad("13", () => {
+            const drumSound = document.createElement('audio');
+            drumSound.src = 'https://prototype.devone.nl/test/webmidi-mapper/audio/samples/cowbell-808.wav';
+            drumSound.type = 'audio/wav';
+            drumSound.play();
+        });
+        onDrumPad("14", () => {
+            const drumSound = document.createElement('audio');
+            drumSound.src = 'https://prototype.devone.nl/test/webmidi-mapper/audio/samples/clap-tape.wav';
+            drumSound.type = 'audio/wav';
+            drumSound.play();
+        });
+
+        /**
+         * Pizzicato
+         */
+        const pizzicatoSound = new pizzicato.Sound('https://prototype.devone.nl/test/webmidi-mapper/audio/muchacho.mp3', () => {
+            const lowPassFilter = new pizzicato.Effects.LowPassFilter({
+                frequency: 22050,
+                peak: 10
+            });
+
+            onRotaryEncoderChange("0", (value) => {
+                if(activeButtons.swing) {
+                    lowPassFilter.frequency = (value * 22050);
+                }
+
+                if(activeButtons.volume) {
+                    pizzicatoSound.volume = value;
+                }
+
+                if(activeButtons.tempo) {
+                    pizzicatoSound.sourceNode.playbackRate.value = (value * 2);
+                }
+            });
+
+            onButtonPress("swing", (value) => {
+                if(value === 127) {
+                    activeButtons.swing = true;
+                } else {
+                    activeButtons.swing = false;
+                }
+            }, true);
+
+            onButtonPress("volume", (value) => {
+                if(value === 127) {
+                    activeButtons.volume = true;
+                } else {
+                    activeButtons.volume = false;
+                }
+            }, true);
+
+            onButtonPress("tempo", (value) => {
+                if(value === 127) {
+                    activeButtons.tempo = true;
+                } else {
+                    activeButtons.tempo = false;
+                }
+            }, true);
+
+            pizzicatoSound.addEffect(lowPassFilter);
+            pizzicatoSound.play();
         });
 
         console.log("Maps: ", midiMaps());
