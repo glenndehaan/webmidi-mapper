@@ -1,5 +1,9 @@
 # Web Midi Mapper
 
+An expansion to the original webmidi package to map devices in a simple way 
+
+[![npm](https://img.shields.io/npm/v/webmidi-mapper.svg)](https://www.npmjs.com/package/webmidi-mapper) ![node](https://img.shields.io/node/v/webmidi-mapper.svg) ![dependencies](https://david-dm.org/glenndehaan/webmidi-mapper.svg)
+
 ## Functionalities
 * Provides an extension to the original Web Midi package
 * Maps devices to easy to remember functions

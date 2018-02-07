@@ -26,13 +26,7 @@ module.exports = {
         ]
     },
     resolve: {
-        fallback: [path.join(__dirname, 'node_modules')],
-        alias: {
-            "TweenLite": "gsap/src/uncompressed/TweenLite",
-            "TweenMax": "gsap/src/uncompressed/TweenMax"
-        }
-    },
-    resolveLoader: {
-        fallback: [path.join(__dirname, 'node_modules')]
+        extensions: ['.js'],
+        modules: [path.join(__dirname, './node_modules')]
     }
 };

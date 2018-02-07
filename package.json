@@ -1,6 +1,6 @@
 {
   "name": "webmidi-mapper",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "An expansion to the original webmidi package to map devices in a simple way",
   "main": "dist/webmidi-mapper.js",
   "author": {
@@ -13,7 +13,10 @@
     "url": "https://github.com/glenndehaan/webmidi-mapper.git"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "dependencies": {
-    "webmidi": "^2.0.0-rc.10"
+    "webmidi": "^2.0.0"
   }
 }
