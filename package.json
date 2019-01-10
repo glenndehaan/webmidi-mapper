@@ -1,6 +1,6 @@
 {
   "name": "webmidi-mapper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An expansion to the original webmidi package to map devices in a simple way",
   "main": "dist/webmidi-mapper.js",
   "author": {
